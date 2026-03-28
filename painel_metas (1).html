@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Metas · Nutri que Lucra</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#9d8768;--gl:#c4b49e;--gp:#f5efe8;--gd:#6b5740;
+  --cream:#faf7f3;--sand:#f0e9df;--ink:#1a1410;--ink2:#2d2218;
+  --muted:#7a6a58;--ghost:#b09880;--white:#fff;
+  --green:#2a6e47;--gn:#edf7f1;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+.nav{background:var(--ink2);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(196,180,158,.1)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff}
+.nav-logo em{color:var(--gl);font-style:italic}
+.nav-sub{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(196,180,158,.35);font-family:'DM Sans',sans-serif;font-weight:400;margin-top:1px}
+.nav-right{display:flex;gap:9px;align-items:center}
+.nav-tag{font-size:10px;color:var(--gl);border:1px solid rgba(196,180,158,.2);padding:3px 12px;border-radius:99px}
+.btn-pdf{font-size:11px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--gd),var(--gold));border:none;padding:6px 16px;border-radius:99px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;display:flex;align-items:center;gap:6px}
+.btn-pdf:hover{opacity:.88}
+.hero{background:var(--ink2);padding:40px 28px 32px;text-align:center}
+.hero-pre{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,180,158,.4);margin-bottom:10px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:#fff;line-height:1.12;margin-bottom:8px}
+.hero h1 em{color:var(--gl);font-style:italic}
+.hero p{font-size:13px;color:rgba(255,255,255,.38);line-height:1.7;max-width:480px;margin:0 auto}
+.crime{background:rgba(155,44,26,.06);border-bottom:1px solid rgba(155,44,26,.1);padding:7px 28px;text-align:center;font-size:11px;color:#7a2d1a}
+.wrap{max-width:980px;margin:0 auto;padding:24px 20px 80px}
+/* ANO */
+.ano-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.ano-bar-left{display:flex;align-items:center;gap:10px}
+.ano-label{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink)}
+.ano-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(157,135,104,.25);background:none;cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ano-btn:hover{border-color:var(--gold);color:var(--gold)}
+.ano-status{font-size:12px;color:var(--ghost)}
+/* SECTION TTL */
+.s-ttl{display:flex;align-items:center;gap:10px;margin:24px 0 12px}
+.s-ttl h2{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--ink);white-space:nowrap}
+.s-ttl h2 em{color:var(--gold);font-style:italic}
+.s-line{flex:1;height:1px;background:rgba(157,135,104,.18)}
+.s-badge{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:var(--gp);color:var(--gd);white-space:nowrap}
+/* GRUPO */
+.grupo{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:12px;overflow:hidden;margin-bottom:9px}
+.g-hdr{display:flex;align-items:center;gap:10px;padding:11px 15px;background:var(--gp);border-bottom:1px solid rgba(157,135,104,.12);cursor:pointer;user-select:none;transition:background .15s}
+.g-hdr:hover,.g-hdr.open{background:var(--sand)}
+.g-ico{font-size:14px}
+.g-nome{font-size:11.5px;font-weight:600;color:var(--gd);flex:1}
+.g-chv{font-size:11px;color:var(--ghost);transition:transform .22s}
+.g-hdr.open .g-chv{transform:rotate(180deg)}
+.g-body{display:none;padding:14px}
+.g-body.show{display:block;animation:su .2s ease}
+@keyframes su{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.g-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+/* CAMPO CARD */
+.cc{border:1px solid rgba(157,135,104,.13);border-radius:9px;padding:11px}
+.cc-top{display:flex;align-items:flex-start;gap:6px;margin-bottom:9px}
+.cc-ico{font-size:13px;margin-top:1px}
+.cc-lbl{font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);line-height:1.3}
+.cc-sub{font-size:9px;color:var(--ghost);margin-top:1px;line-height:1.35}
+.cc-row-lbl{font-size:9px;color:var(--ghost);text-transform:uppercase;letter-spacing:.06em;margin:7px 0 2px}
+.prog-bar{height:4px;background:var(--sand);border-radius:99px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:99px;transition:width .45s ease}
+.prog-pct{font-size:9.5px;margin-top:3px}
+/* EDITABLE */
+.ef{display:flex;flex-direction:column;gap:2px}
+.ef-show{display:flex;align-items:center;gap:5px;padding:2px 4px;border-radius:5px;cursor:pointer;min-height:26px;transition:background .15s}
+.ef-show:hover{background:rgba(157,135,104,.08)}
+.ef-val{font-size:16px;font-weight:600;color:var(--ink);line-height:1}
+.ef-val.real{color:var(--green)}
+.ef-val.empty{font-size:13px;font-weight:400;color:rgba(176,152,128,.35)}
+.ef-pen{font-size:10px;color:var(--ghost);opacity:0;transition:opacity .15s}
+.ef-show:hover .ef-pen{opacity:1}
+.ef-edit{display:none;gap:5px;align-items:center;flex-wrap:wrap;margin-top:3px}
+.ef-edit.on{display:flex}
+.ef-inp{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--ink);background:var(--cream);border:1.5px solid var(--gold);border-radius:7px;padding:4px 8px;outline:none;width:100px}
+.ef-ok{background:var(--gold);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;cursor:pointer}
+.ef-cx{background:none;color:var(--ghost);border:1px solid rgba(157,135,104,.2);border-radius:6px;padding:4px 7px;font-family:'DM Sans',sans-serif;font-size:10.5px;cursor:pointer}
+/* GRAFICO */
+.graf-wrap{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:12px;padding:16px;margin-bottom:10px}
+.graf-ttl{font-family:'Playfair Display',serif;font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.graf-ttl em{color:var(--gold);font-style:italic}
+.graf-sub{font-size:11px;color:var(--ghost);margin-bottom:13px}
+.graf-chart{height:150px;display:flex;align-items:flex-end;gap:3px;border-bottom:1px solid rgba(157,135,104,.14);position:relative}
+.graf-chart::before{content:'';position:absolute;left:0;right:0;bottom:75px;height:1px;background:rgba(157,135,104,.07);pointer-events:none}
+.g-col{display:flex;flex-direction:column;align-items:center;flex:1}
+.g-bars{display:flex;align-items:flex-end;gap:2px;width:100%;height:150px}
+.g-bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;position:relative;cursor:pointer;transition:height .5s cubic-bezier(.4,0,.2,1)}
+.g-bar.fat{background:linear-gradient(180deg,var(--gl),var(--gd))}
+.g-bar.fat:hover{opacity:.82}
+.g-bar.meta-b{background:rgba(157,135,104,.1);border:1px dashed rgba(157,135,104,.28);border-bottom:none}
+.g-bar:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:var(--ink2);color:#fff;font-size:10px;padding:3px 8px;border-radius:5px;white-space:nowrap;z-index:10;pointer-events:none}
+.g-lbl{font-size:8.5px;color:var(--ghost);font-weight:500;margin-top:4px;white-space:nowrap}
+.graf-leg{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
+.gleg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.gleg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+/* RESUMO */
+.resumo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-bottom:10px}
+.rc{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:10px;padding:13px}
+.rc-top{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.rc-ico{font-size:13px}
+.rc-lbl{font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);line-height:1.3}
+.rc-val{font-size:19px;font-weight:700;color:var(--ink);font-family:'Playfair Display',serif;line-height:1}
+.rc-sub{font-size:9.5px;color:var(--ghost);margin-top:3px}
+.rc-bar{height:4px;background:var(--sand);border-radius:99px;overflow:hidden;margin-top:7px}
+.rc-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .5s ease}
+.rc-pct{font-size:9.5px;color:var(--ghost);margin-top:3px}
+/* TAXAS */
+.taxas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px;margin-bottom:10px}
+.taxa{background:var(--cream);border:1px dashed rgba(157,135,104,.2);border-radius:9px;padding:11px;display:flex;gap:9px;align-items:flex-start}
+.taxa-ico{font-size:17px;flex-shrink:0}
+.taxa-lbl{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.taxa-val{font-size:19px;font-weight:700;color:var(--gd);font-family:'Playfair Display',serif;line-height:1}
+.taxa-desc{font-size:9.5px;color:var(--ghost);margin-top:3px;line-height:1.4}
+/* CHECKS */
+.chk-wrap{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:12px;padding:14px;margin-bottom:9px}
+.chk-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.chk-ttl{font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.chk-count{font-size:11px;font-weight:600;color:var(--green)}
+.sems{display:flex;flex-direction:column;gap:7px}
+.sem-row{display:flex;align-items:center;gap:7px}
+.sem-lbl{font-size:10px;color:var(--ghost);min-width:50px;flex-shrink:0}
+.dias-row{display:flex;gap:3px;flex-wrap:wrap}
+.dia{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;user-select:none}
+.dia-n{font-size:8.5px;color:var(--ghost)}
+.dia-b{width:19px;height:19px;border-radius:4px;border:1.5px solid rgba(157,135,104,.22);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:all .15s}
+.dia.on .dia-b{background:var(--gold);border-color:var(--gold);color:#fff}
+.dia.on .dia-n{color:var(--gd);font-weight:600}
+/* MESES NAV */
+.meses-nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.m-tab{font-size:11px;font-weight:500;padding:5px 11px;border-radius:99px;border:1.5px solid rgba(157,135,104,.2);background:none;cursor:pointer;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .18s}
+.m-tab:hover{border-color:var(--gold);color:var(--gold)}
+.m-tab.active{background:linear-gradient(135deg,var(--gd),var(--gold));border-color:var(--gold);color:#fff;font-weight:600}
+.m-tab.ok{border-color:var(--green);color:var(--green)}
+.m-tab.ok.active{background:linear-gradient(135deg,#1b3d27,var(--green));border-color:var(--green);color:#fff}
+.m-tab.parcial{border-color:var(--gl);color:var(--gd)}
+/* MÊS */
+.mv{display:none}
+.mv.active{display:block;animation:su .25s ease}
+/* OBS */
+.obs-w{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:11px;padding:13px;margin-bottom:9px}
+.obs-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.obs-ta{width:100%;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:none;border:none;outline:none;resize:none;line-height:1.6;min-height:50px}
+.obs-ta::placeholder{color:rgba(176,152,128,.4)}
+.obs-btns{display:none;gap:6px;margin-top:7px;padding-top:7px;border-top:1px dashed rgba(157,135,104,.14)}
+.obs-btns.show{display:flex}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink2);color:var(--gl);font-size:12px;font-weight:500;padding:10px 18px;border-radius:99px;border:1px solid rgba(196,180,158,.15);z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.footer{text-align:center;padding:20px;border-top:1px solid rgba(157,135,104,.12)}
+.footer-logo{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--gd);margin-bottom:4px}
+.footer-logo em{color:var(--gold);font-style:italic}
+.footer p{font-size:11px;color:var(--ghost);line-height:1.7}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff}
+  .nav,.crime,.btn-pdf,.ano-btn,.m-tab,.footer,.toast,.ef-edit,.ef-pen,.obs-btns,.g-chv{display:none!important}
+  .wrap{padding:0;max-width:100%}
+  .hero{padding:14px;break-after:avoid}
+  .mv,.g-body{display:block!important}
+  .mv:not(.active){display:none!important}
+}
+@media(max-width:600px){
+  .nav,.hero,.crime{padding-left:16px;padding-right:16px}
+  .wrap{padding-left:14px;padding-right:14px}
+  .g-grid,.resumo-grid,.taxas-grid{grid-template-columns:1fr 1fr}
+  .graf-chart,.g-bars{height:110px}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">nutri <em>que lucra</em><span class="nav-sub">Painel de Metas</span></div>
+  <div class="nav-right">
+    <div class="nav-tag">✦ Exclusivo para alunas</div>
+    <button class="btn-pdf" onclick="window.print()">⬇ Baixar PDF</button>
+  </div>
+</nav>
+<section class="hero">
+  <div class="hero-pre">Metas mensais e anuais · Salvo automaticamente no seu navegador</div>
+  <h1>Painel de<br><em>Metas Lucrativas</em></h1>
+  <p>Clique em qualquer número para editar. Marque os dias de prospecção. Taxas calculadas automaticamente.</p>
+</section>
+<div class="crime">🔒 Material exclusivo para alunas do Nutri que Lucra. Compartilhar com terceiros é crime previsto na Lei 9.610/98.</div>
+
+<div class="wrap">
+  <div class="ano-bar">
+    <div class="ano-bar-left">
+      <button class="ano-btn" onclick="mudarAno(-1)">‹</button>
+      <div class="ano-label" id="anoLabel">2026</div>
+      <button class="ano-btn" onclick="mudarAno(1)">›</button>
+    </div>
+    <div class="ano-status" id="anoStatus"></div>
+  </div>
+
+  <div class="s-ttl"><h2>Evolução <em>Anual</em></h2><div class="s-line"></div></div>
+  <div class="graf-wrap">
+    <div class="graf-ttl">Faturamento <em>realizado vs meta</em></div>
+    <div class="graf-sub">Barras douradas: realizado. Barras tracejadas: meta. Passe o mouse para ver os valores.</div>
+    <div class="graf-chart" id="grafChart"></div>
+    <div class="graf-leg">
+      <div class="gleg"><div class="gleg-dot" style="background:var(--gold)"></div>Realizado</div>
+      <div class="gleg"><div class="gleg-dot" style="background:rgba(157,135,104,.15);border:1px dashed #9d8768"></div>Meta</div>
+    </div>
+  </div>
+
+  <div class="s-ttl"><h2>Metas <em>por Mês</em></h2><div class="s-line"></div><div class="s-badge">Clique no mês</div></div>
+  <div class="meses-nav" id="mesesNav"></div>
+  <div id="mesesViews"></div>
+</div>
+
+<div class="footer">
+  <div class="footer-logo">nutri <em>que lucra</em></div>
+  <p>© Nutri que Lucra · Todos os direitos reservados<br>Dados salvos localmente no seu navegador.</p>
+</div>
+<div class="toast" id="toast">✓ Salvo!</div>
+
+<script>
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MESES_DIAS=[31,28,31,30,31,30,31,31,30,31,30,31];
+
+const GRUPOS=[
+  {id:'fin', ico:'💰', nome:'Financeiro', campos:[
+    {key:'fat',    lbl:'Faturamento total',     ico:'💰', pfx:'R$', sub:'Soma de todos os serviços'},
+    {key:'avulsa', lbl:'Consulta avulsa',        ico:'📋', pfx:'R$', sub:'Receita de consultas avulsas'},
+    {key:'trim',   lbl:'Programa trimestral',    ico:'📅', pfx:'R$', sub:'Receita de programas 3 meses'},
+    {key:'sem6',   lbl:'Programa semestral',     ico:'📅', pfx:'R$', sub:'Receita de programas 6 meses'},
+    {key:'anu',    lbl:'Programa anual',         ico:'📅', pfx:'R$', sub:'Receita de programas 12 meses'},
+    {key:'renov',  lbl:'Renovações',             ico:'🔄', pfx:'R$', sub:'Receita de renovações'},
+  ]},
+  {id:'pros', ico:'📞', nome:'Prospecção e Vendas', campos:[
+    {key:'conv',      lbl:'Conversas abertas',        ico:'💬', pfx:'', sub:'WhatsApp + DM Instagram'},
+    {key:'sess_marc', lbl:'Sessões diagnósticas marcadas', ico:'📌', pfx:'', sub:'Agendamentos confirmados'},
+    {key:'sess_comp', lbl:'Sessões comparecidas',     ico:'✅', pfx:'', sub:'Quem efetivamente apareceu'},
+    {key:'noshow',    lbl:'No-show',                  ico:'🚫', pfx:'', sub:'Marcou e não compareceu'},
+    {key:'fecha',     lbl:'Fechamentos',              ico:'🎯', pfx:'', sub:'Vendas concluídas'},
+  ]},
+  {id:'pac', ico:'👩', nome:'Pacientes', campos:[
+    {key:'pac_ativ',  lbl:'Pacientes ativos',          ico:'👩', pfx:'', sub:'Em acompanhamento agora'},
+    {key:'pac_nov',   lbl:'Pacientes novos',           ico:'✨', pfx:'', sub:'Entraram este mês'},
+    {key:'pac_renov', lbl:'Renovações de pacientes',   ico:'🔄', pfx:'', sub:'Renovaram o programa'},
+    {key:'pac_alta',  lbl:'Pacientes de alta',         ico:'🏁', pfx:'', sub:'Finalizaram o programa'},
+  ]},
+  {id:'cont', ico:'📱', nome:'Conteúdo e Redes', campos:[
+    {key:'stories',  lbl:'Dias com stories',           ico:'📸', pfx:'', sub:'Dias que postou stories'},
+    {key:'reels',    lbl:'Reels publicados',           ico:'🎬', pfx:'', sub:'Reels no feed este mês'},
+    {key:'carros',   lbl:'Carrosseis publicados',      ico:'📊', pfx:'', sub:'Carrosseis no feed'},
+    {key:'seguid',   lbl:'Seguidores ganhos',          ico:'📈', pfx:'', sub:'Crescimento líquido'},
+  ]},
+];
+
+const RESUMO_CAMPOS=[
+  {key:'fat',      lbl:'Faturamento',        ico:'💰', pfx:'R$'},
+  {key:'fecha',    lbl:'Fechamentos',        ico:'🎯', pfx:''},
+  {key:'pac_nov',  lbl:'Pacientes novos',    ico:'✨', pfx:''},
+  {key:'pac_renov',lbl:'Renovações',         ico:'🔄', pfx:''},
+  {key:'conv',     lbl:'Conversas',          ico:'💬', pfx:''},
+  {key:'sess_comp',lbl:'Sessões realizadas', ico:'📌', pfx:''},
+  {key:'stories',  lbl:'Dias de stories',    ico:'📸', pfx:''},
+  {key:'reels',    lbl:'Reels',              ico:'🎬', pfx:''},
+  {key:'seguid',   lbl:'Seguidores ganhos',  ico:'📈', pfx:''},
+];
+
+let anoAtual=new Date().getFullYear();
+let mesAtivo='resumo';
+let dados={};
+
+// STORAGE
+function carregar(){try{const s=localStorage.getItem('nql_metas3_'+anoAtual);dados=s?JSON.parse(s):{};}catch(e){dados={};}}
+function salvar(){try{localStorage.setItem('nql_metas3_'+anoAtual,JSON.stringify(dados));}catch(e){}showToast();}
+function get(p,d=''){const ps=p.split('.');let o=dados;for(const k of ps){if(o==null)return d;o=o[k];}return o!=null?o:d;}
+function set(p,v){const ps=p.split('.');let o=dados;for(let i=0;i<ps.length-1;i++){if(!o[ps[i]])o[ps[i]]={};o=o[ps[i]];}o[ps[ps.length-1]]=v;}
+
+// UTILS
+function pn(s){if(!s&&s!==0)return 0;return parseFloat(String(s).replace(/[^0-9.,]/g,'').replace(/\./g,'').replace(',','.'))||0;}
+function fn(n,pfx=''){if(!n)return pfx?pfx+'0':'0';return pfx+n.toLocaleString('pt-BR');}
+function getDias(mi){return(mi===1&&anoAtual%4===0&&(anoAtual%100!==0||anoAtual%400===0))?29:MESES_DIAS[mi];}
+function sumAnual(key){let t=0;for(let i=0;i<12;i++)t+=pn(get('mes.'+i+'.real.'+key,0));return t;}
+function sumAnualMeta(key){let t=0;for(let i=0;i<12;i++)t+=pn(get('mes.'+i+'.meta.'+key,0));return t;}
+
+// CAMPO EDITÁVEL
+function mkEF(path,opts={}){
+  const{pfx='',ph='0',isReal=false}=opts;
+  const val=get(path,'');
+  const num=pn(val);
+  const disp=num?fn(num,pfx):'';
+  const wrap=document.createElement('div');wrap.className='ef';
+  const show=document.createElement('div');show.className='ef-show';
+  show.innerHTML=disp?`<span class="ef-val${isReal?' real':''}">${disp}</span><span class="ef-pen">✏</span>`:`<span class="ef-val empty">${pfx||''}${ph}</span><span class="ef-pen">✏</span>`;
+  const edit=document.createElement('div');edit.className='ef-edit';
+  const inp=document.createElement('input');inp.className='ef-inp';inp.type='text';inp.value=val;inp.placeholder=ph;
+  const ok=document.createElement('button');ok.className='ef-ok';ok.textContent='Salvar';
+  const cx=document.createElement('button');cx.className='ef-cx';cx.textContent='✕';
+  edit.append(inp,ok,cx);wrap.append(show,edit);
+  function abrir(e){e.stopPropagation();show.style.display='none';edit.classList.add('on');inp.focus();inp.select();}
+  function sv(){set(path,inp.value.trim());salvar();renderTudo();}
+  function cc(){edit.classList.remove('on');show.style.display='';}
+  show.onclick=abrir;ok.onclick=sv;cx.onclick=cc;
+  inp.onkeydown=e=>{if(e.key==='Enter')sv();if(e.key==='Escape')cc();};
+  return wrap;
+}
+
+// PROG BAR
+function mkProg(real,meta){
+  const pct=meta?Math.min(100,Math.round(real/meta*100)):0;
+  const bg=pct>=100?'linear-gradient(90deg,var(--green),#4ade80)':pct>=60?'linear-gradient(90deg,#f59e0b,#fbbf24)':'linear-gradient(90deg,#b91c1c,#f87171)';
+  const tc=pct>=100?'var(--green)':pct>=60?'#b45309':'#b91c1c';
+  const em=real>0?(pct>=100?' 🏆':pct>=60?' 📈':' 📉'):'';
+  const d=document.createElement('div');
+  d.innerHTML=`<div class="prog-bar"><div class="prog-fill" style="width:${Math.min(100,pct)}%;background:${bg}"></div></div><div class="prog-pct" style="color:${tc}">${real>0?pct+'% da meta'+em:''}</div>`;
+  return d;
+}
+
+// GRÁFICO
+function renderGraf(){
+  const c=document.getElementById('grafChart');c.innerHTML='';
+  const H=150;
+  const vals=MESES.map((_,mi)=>({meta:pn(get('mes.'+mi+'.meta.fat',0)),real:pn(get('mes.'+mi+'.real.fat',0))}));
+  const maxV=Math.max(...vals.map(v=>Math.max(v.meta,v.real)),1);
+  MESES.forEach((mes,mi)=>{
+    const{meta,real}=vals[mi];
+    const hR=Math.max(3,Math.round((real/maxV)*H));
+    const hM=Math.max(3,Math.round((meta/maxV)*H));
+    const col=document.createElement('div');col.className='g-col';
+    const bars=document.createElement('div');bars.className='g-bars';
+    const bR=document.createElement('div');bR.className='g-bar fat';bR.style.height=hR+'px';bR.setAttribute('data-tip',mes+': '+fn(real,'R$'));
+    const bM=document.createElement('div');bM.className='g-bar meta-b';bM.style.height=hM+'px';bM.setAttribute('data-tip','Meta '+mes.substring(0,3)+': '+fn(meta,'R$'));
+    bars.append(bR,bM);
+    const lbl=document.createElement('div');lbl.className='g-lbl';lbl.textContent=mes.substring(0,3);
+    col.append(bars,lbl);c.appendChild(col);
+  });
+}
+
+// TAXAS
+function calcTaxas(mi){
+  const pre=mi!==null?'mes.'+mi+'.real.':'sum_';
+  const g=key=>mi!==null?pn(get('mes.'+mi+'.real.'+key,0)):sumAnual(key);
+  const conv=g('conv'),fecha=g('fecha'),marc=g('sess_marc'),comp=g('sess_comp'),noshow=g('noshow'),fat=g('fat'),pacNov=g('pac_nov'),pacRenov=g('pac_renov');
+  return[
+    {ico:'🎯',lbl:'Conversão de conversas',val:conv?Math.round(fecha/conv*100)+'%':'—',desc:`${fecha} fecham. em ${conv} conv.`},
+    {ico:'📌',lbl:'Comparecimento',val:marc?Math.round(comp/marc*100)+'%':'—',desc:`${comp} de ${marc} sessões marcadas`},
+    {ico:'🚫',lbl:'Taxa de no-show',val:marc?Math.round(noshow/marc*100)+'%':'—',desc:`${noshow} de ${marc} sessões marcadas`},
+    {ico:'💡',lbl:'Conversão em sessão',val:comp?Math.round(fecha/comp*100)+'%':'—',desc:`${fecha} fech. em ${comp} sessões`},
+    {ico:'💰',lbl:'Ticket médio',val:fecha?fn(Math.round(fat/fecha),'R$'):'—',desc:'Faturamento ÷ fechamentos'},
+    {ico:'🔄',lbl:'Taxa de renovação',val:pacNov?Math.round(pacRenov/pacNov*100)+'%':'—',desc:`${pacRenov} renov. em ${pacNov} pac. novos`},
+  ];
+}
+
+// OBS
+function mkObs(key){
+  const w=document.createElement('div');w.className='obs-w';
+  const lbl=document.createElement('div');lbl.className='obs-lbl';lbl.textContent='📝 Anotações';
+  const ta=document.createElement('textarea');ta.className='obs-ta';ta.rows=3;ta.placeholder='O que funcionou? O que precisa melhorar? Insights importantes...';
+  const oKey=key==='resumo'?'resumo.obs':'mes.'+key+'.obs';
+  ta.value=get(oKey,'');
+  const btns=document.createElement('div');btns.className='obs-btns';
+  const bOk=document.createElement('button');bOk.className='ef-ok';bOk.textContent='Salvar anotação';
+  const bCx=document.createElement('button');bCx.className='ef-cx';bCx.textContent='Cancelar';
+  const orig={v:ta.value};
+  ta.onfocus=()=>btns.classList.add('show');
+  bOk.onclick=()=>{set(oKey,ta.value);salvar();btns.classList.remove('show');orig.v=ta.value;};
+  bCx.onclick=()=>{ta.value=orig.v;btns.classList.remove('show');};
+  btns.append(bOk,bCx);w.append(lbl,ta,btns);
+  return w;
+}
+
+// RESUMO ANUAL
+function buildResumo(view){
+  const tit=document.createElement('div');tit.style.marginBottom='14px';
+  tit.innerHTML=`<span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink)">Resumo <em style="color:var(--gold);font-style:italic">${anoAtual}</em></span><p style="font-size:12px;color:var(--ghost);margin-top:4px">Consolidado automático de todos os meses. Preencha os meses individuais e este painel atualiza sozinho.</p>`;
+  view.appendChild(tit);
+
+  // Cards resumo
+  const lbl1=document.createElement('div');lbl1.style.cssText='font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:9px';lbl1.textContent='Resultados consolidados';
+  view.appendChild(lbl1);
+  const grid=document.createElement('div');grid.className='resumo-grid';
+  RESUMO_CAMPOS.forEach(cfg=>{
+    const real=sumAnual(cfg.key);
+    const meta=sumAnualMeta(cfg.key);
+    const pct=meta?Math.min(100,Math.round(real/meta*100)):0;
+    const card=document.createElement('div');card.className='rc';
+    card.innerHTML=`<div class="rc-top"><span class="rc-ico">${cfg.ico}</span><span class="rc-lbl">${cfg.lbl}</span></div><div class="rc-val">${fn(real,cfg.pfx)||'0'}</div><div class="rc-sub">Meta: ${fn(meta,cfg.pfx)||'não definida'}</div>${meta?`<div class="rc-bar"><div class="rc-fill" style="width:${pct}%"></div></div><div class="rc-pct">${pct}% da meta</div>`:''}`;
+    grid.appendChild(card);
+  });
+  view.appendChild(grid);
+
+  // Indicadores calculados
+  const lbl2=document.createElement('div');lbl2.style.cssText='font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 9px';lbl2.textContent='📐 Indicadores calculados automaticamente';
+  view.appendChild(lbl2);
+  const tGrid=document.createElement('div');tGrid.className='taxas-grid';
+  calcTaxas(null).forEach(t=>{
+    const d=document.createElement('div');d.className='taxa';
+    d.innerHTML=`<div class="taxa-ico">${t.ico}</div><div><div class="taxa-lbl">${t.lbl}</div><div class="taxa-val">${t.val}</div><div class="taxa-desc">${t.desc}</div></div>`;
+    tGrid.appendChild(d);
+  });
+  view.appendChild(tGrid);
+  view.appendChild(mkObs('resumo'));
+}
+
+// MÊS
+function buildMes(view,mi,mesNome){
+  const tit=document.createElement('div');tit.style.cssText='margin-bottom:14px;display:flex;align-items:center;gap:8px';
+  tit.innerHTML=`<span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink)">${mesNome} ${anoAtual}</span>`;
+  view.appendChild(tit);
+
+  GRUPOS.forEach(grupo=>{
+    const g=document.createElement('div');g.className='grupo';
+    const hdr=document.createElement('div');hdr.className='g-hdr open';
+    hdr.innerHTML=`<span class="g-ico">${grupo.ico}</span><span class="g-nome">${grupo.nome}</span><span class="g-chv">▾</span>`;
+    const body=document.createElement('div');body.className='g-body show';
+    hdr.onclick=()=>{hdr.classList.toggle('open');body.classList.toggle('show');};
+    const grid=document.createElement('div');grid.className='g-grid';
+
+    grupo.campos.forEach(cfg=>{
+      const mV=pn(get('mes.'+mi+'.meta.'+cfg.key,0));
+      const rV=pn(get('mes.'+mi+'.real.'+cfg.key,0));
+      const cc=document.createElement('div');cc.className='cc';
+      const top=document.createElement('div');top.className='cc-top';
+      top.innerHTML=`<span class="cc-ico">${cfg.ico}</span><div><div class="cc-lbl">${cfg.lbl}</div><div class="cc-sub">${cfg.sub}</div></div>`;
+      const ml=document.createElement('div');ml.className='cc-row-lbl';ml.textContent='Meta';
+      const mEF=mkEF('mes.'+mi+'.meta.'+cfg.key,{pfx:cfg.pfx,ph:'0'});
+      const rl=document.createElement('div');rl.className='cc-row-lbl';rl.textContent='Realizado';
+      const rEF=mkEF('mes.'+mi+'.real.'+cfg.key,{pfx:cfg.pfx,ph:'0',isReal:true});
+      const pb=mkProg(rV,mV);
+      cc.append(top,ml,mEF,rl,rEF,pb);
+      grid.appendChild(cc);
+    });
+    body.appendChild(grid);
+
+    // Taxas do grupo Prospecção
+    if(grupo.id==='pros'){
+      const conv=pn(get('mes.'+mi+'.real.conv',0));
+      const marc=pn(get('mes.'+mi+'.real.sess_marc',0));
+      const fat=pn(get('mes.'+mi+'.real.fat',0));
+      const fecha=pn(get('mes.'+mi+'.real.fecha',0));
+      if(conv||marc||fat){
+        const div=document.createElement('div');div.style.cssText='margin-top:11px;padding-top:11px;border-top:1px dashed rgba(157,135,104,.14)';
+        div.innerHTML=`<div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">📐 Indicadores do mês</div>`;
+        const tg=document.createElement('div');tg.className='taxas-grid';
+        calcTaxas(mi).forEach(t=>{
+          const d=document.createElement('div');d.className='taxa';d.style.padding='9px';
+          d.innerHTML=`<div style="font-size:15px;flex-shrink:0">${t.ico}</div><div><div class="taxa-lbl">${t.lbl}</div><div class="taxa-val" style="font-size:17px">${t.val}</div><div class="taxa-desc">${t.desc}</div></div>`;
+          tg.appendChild(d);
+        });
+        div.appendChild(tg);body.appendChild(div);
+      }
+    }
+    g.append(hdr,body);
+    view.appendChild(g);
+  });
+
+  // Checks
+  const numDias=getDias(mi);
+  let cnt=0;for(let d=1;d<=numDias;d++)if(get('mes.'+mi+'.checks.'+d,false))cnt++;
+  const cw=document.createElement('div');cw.className='chk-wrap';
+  const ch=document.createElement('div');ch.className='chk-head';
+  ch.innerHTML=`<span class="chk-ttl">✅ Dias com prospecção ativa</span><span class="chk-count" id="cc_${mi}">${cnt} / ${numDias} dias</span>`;
+  const sems=document.createElement('div');sems.className='sems';
+  let dia=1,sem=1;
+  while(dia<=numDias){
+    const sr=document.createElement('div');sr.className='sem-row';
+    sr.innerHTML=`<span class="sem-lbl">Sem ${sem}</span>`;
+    const dr=document.createElement('div');dr.className='dias-row';
+    for(let d=0;d<7&&dia<=numDias;d++,dia++){
+      const on=get('mes.'+mi+'.checks.'+dia,false);
+      const el=document.createElement('div');el.className='dia'+(on?' on':'');el.id='dc_'+mi+'_'+dia;
+      el.innerHTML=`<span class="dia-n">${dia}</span><div class="dia-b">✓</div>`;
+      const _d=dia;el.onclick=()=>toggleCheck(mi,_d);
+      dr.appendChild(el);
+    }
+    sr.appendChild(dr);sems.appendChild(sr);sem++;
+  }
+  cw.append(ch,sems);view.appendChild(cw);
+  view.appendChild(mkObs(mi));
+}
+
+// TOGGLE CHECK
+function toggleCheck(mi,dia){
+  const on=get('mes.'+mi+'.checks.'+dia,false);
+  set('mes.'+mi+'.checks.'+dia,!on);salvar();
+  const el=document.getElementById('dc_'+mi+'_'+dia);if(el)el.classList.toggle('on',!on);
+  const nd=getDias(mi);let cnt=0;for(let d=1;d<=nd;d++)if(get('mes.'+mi+'.checks.'+d,false))cnt++;
+  const cc=document.getElementById('cc_'+mi);if(cc)cc.textContent=cnt+' / '+nd+' dias';
+}
+
+// NAV
+function renderNav(){
+  const c=document.getElementById('mesesNav');c.innerHTML='';
+  const tr=document.createElement('button');tr.className='m-tab'+(mesAtivo==='resumo'?' active':'');
+  tr.textContent='📊 Resumo anual';tr.onclick=()=>{mesAtivo='resumo';renderNav();renderViews();};
+  c.appendChild(tr);
+  MESES.forEach((mes,mi)=>{
+    const temMeta=GRUPOS.some(g=>g.campos.some(cf=>get('mes.'+mi+'.meta.'+cf.key,'')!==''));
+    const temReal=GRUPOS.some(g=>g.campos.some(cf=>get('mes.'+mi+'.real.'+cf.key,'')!==''));
+    let cls='m-tab';
+    if(mesAtivo===mi)cls+=' active';
+    else if(temMeta&&temReal)cls+=' ok';
+    else if(temMeta||temReal)cls+=' parcial';
+    const btn=document.createElement('button');btn.className=cls;btn.textContent=mes.substring(0,3);
+    btn.onclick=()=>{mesAtivo=mi;renderNav();renderViews();};
+    c.appendChild(btn);
+  });
+}
+
+function renderViews(){
+  const c=document.getElementById('mesesViews');c.innerHTML='';
+  const rv=document.createElement('div');rv.className='mv'+(mesAtivo==='resumo'?' active':'');
+  buildResumo(rv);c.appendChild(rv);
+  MESES.forEach((mes,mi)=>{
+    const v=document.createElement('div');v.className='mv'+(mesAtivo===mi?' active':'');
+    buildMes(v,mi,mes);c.appendChild(v);
+  });
+}
+
+function renderTudo(){
+  renderGraf();renderNav();renderViews();
+  const real=sumAnual('fat');const meta=sumAnualMeta('fat');
+  document.getElementById('anoStatus').textContent=meta>0?fn(real,'R$')+' de '+fn(meta,'R$')+' ('+Math.round(real/meta*100)+'%)':real>0?fn(real,'R$')+' realizado no ano':'';
+}
+
+function mudarAno(d){anoAtual+=d;document.getElementById('anoLabel').textContent=anoAtual;carregar();mesAtivo='resumo';renderTudo();}
+function showToast(){const t=document.getElementById('toast');t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
+
+carregar();renderTudo();
+</script>
+</body>
+</html>
