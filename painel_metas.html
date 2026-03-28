@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Metas · Nutri que Lucra</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#9d8768;--gl:#c4b49e;--gp:#f5efe8;--gd:#6b5740;
+  --cream:#faf7f3;--sand:#f0e9df;--ink:#1a1410;--ink2:#2d2218;
+  --muted:#7a6a58;--ghost:#b09880;--white:#fff;
+  --green:#2a6e47;--gn:#edf7f1;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+
+/* NAV */
+.nav{background:var(--ink2);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(196,180,158,.1)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff}
+.nav-logo em{color:var(--gl);font-style:italic}
+.nav-sub{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(196,180,158,.35);font-family:'DM Sans',sans-serif;font-weight:400;margin-top:1px}
+.nav-right{display:flex;gap:9px;align-items:center}
+.nav-tag{font-size:10px;color:var(--gl);border:1px solid rgba(196,180,158,.2);padding:3px 12px;border-radius:99px}
+.btn-pdf{font-size:11px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--gd),var(--gold));border:none;padding:6px 16px;border-radius:99px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;display:flex;align-items:center;gap:6px}
+.btn-pdf:hover{opacity:.88}
+
+/* HERO */
+.hero{background:var(--ink2);padding:40px 28px 32px;text-align:center}
+.hero-pre{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,180,158,.4);margin-bottom:10px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,36px);font-weight:700;color:#fff;line-height:1.12;margin-bottom:8px}
+.hero h1 em{color:var(--gl);font-style:italic}
+.hero p{font-size:13px;color:rgba(255,255,255,.38);line-height:1.7;max-width:480px;margin:0 auto}
+.crime{background:rgba(155,44,26,.06);border-bottom:1px solid rgba(155,44,26,.1);padding:7px 28px;text-align:center;font-size:11px;color:#7a2d1a}
+
+/* WRAP */
+.wrap{max-width:960px;margin:0 auto;padding:24px 20px 80px}
+
+/* ANO BAR */
+.ano-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+.ano-bar-left{display:flex;align-items:center;gap:10px}
+.ano-label{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink)}
+.ano-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(157,135,104,.25);background:none;cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ano-btn:hover{border-color:var(--gold);color:var(--gold)}
+.ano-status{font-size:12px;color:var(--ghost)}
+
+/* SECTION TTL */
+.section-ttl{display:flex;align-items:center;gap:10px;margin:26px 0 13px}
+.section-ttl h2{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--ink);white-space:nowrap}
+.section-ttl h2 em{color:var(--gold);font-style:italic}
+.section-line{flex:1;height:1px;background:rgba(157,135,104,.18)}
+.section-badge{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:var(--gp);color:var(--gd);white-space:nowrap}
+
+/* ══ CAMPOS EDITÁVEIS INLINE ══ */
+.editable-field{
+  display:flex;align-items:center;gap:6px;
+  padding:3px 6px;border-radius:6px;cursor:pointer;
+  transition:background .15s;min-height:28px;
+}
+.editable-field:hover{background:rgba(157,135,104,.08)}
+.editable-field .ef-val{font-size:18px;font-weight:600;color:var(--ink);line-height:1}
+.editable-field .ef-empty{font-size:14px;font-weight:400;color:rgba(176,152,128,.5);line-height:1}
+.editable-field .ef-ico{font-size:11px;color:var(--ghost);opacity:0;transition:opacity .15s}
+.editable-field:hover .ef-ico{opacity:1}
+
+.edit-mode{display:none;align-items:center;gap:5px;margin-top:4px}
+.edit-mode.active{display:flex}
+.edit-inp{
+  font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:var(--ink);
+  background:var(--cream);border:1.5px solid var(--gold);border-radius:7px;
+  padding:5px 9px;outline:none;width:130px;
+}
+.edit-ok{background:var(--gold);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.edit-ok:hover{opacity:.85}
+.edit-cancel{background:none;color:var(--ghost);border:1px solid rgba(157,135,104,.2);border-radius:6px;padding:5px 9px;font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;transition:all .15s}
+.edit-cancel:hover{border-color:var(--gold);color:var(--muted)}
+
+/* METAS ANUAIS */
+.metas-anuais{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:8px}
+.mac{background:var(--white);border:1px solid rgba(157,135,104,.18);border-radius:12px;padding:16px;transition:box-shadow .15s}
+.mac:hover{box-shadow:0 3px 14px rgba(26,20,16,.06)}
+.mac-header{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.mac-ico{font-size:15px}
+.mac-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mac-real-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px dashed rgba(157,135,104,.18)}
+.mac-real-lbl{font-size:10px;color:var(--ghost)}
+.mac-real-val{font-size:13px;font-weight:600;color:var(--green)}
+.mac-bar{height:4px;background:var(--sand);border-radius:99px;overflow:hidden;margin-top:7px}
+.mac-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .5s ease}
+.mac-pct{font-size:10px;color:var(--ghost);margin-top:4px}
+
+/* ══ GRÁFICO ══ */
+.grafico-wrap{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:12px;padding:20px;margin-bottom:10px}
+.grafico-ttl{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.grafico-ttl em{color:var(--gold);font-style:italic}
+.grafico-sub{font-size:11px;color:var(--ghost);margin-bottom:16px}
+
+/* Container do gráfico com altura fixa em px */
+.grafico-chart{
+  height:160px;
+  display:flex;
+  align-items:flex-end;
+  gap:4px;
+  border-bottom:1px solid rgba(157,135,104,.18);
+  padding-bottom:0;
+  position:relative;
+}
+/* Linhas de referência */
+.grafico-chart::before,
+.grafico-chart::after{
+  content:'';position:absolute;left:0;right:0;height:1px;
+  background:rgba(157,135,104,.08);pointer-events:none;
+}
+.grafico-chart::before{bottom:53px}
+.grafico-chart::after{bottom:106px}
+
+.g-col{display:flex;flex-direction:column;align-items:center;flex:1;gap:0;position:relative}
+.g-bars{display:flex;align-items:flex-end;gap:2px;width:100%}
+.g-bar{
+  flex:1;border-radius:3px 3px 0 0;
+  position:relative;cursor:pointer;
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+  min-height:3px;
+}
+.g-bar.fat{background:linear-gradient(180deg,var(--gl),var(--gd))}
+.g-bar.meta-bar{
+  background:rgba(157,135,104,.12);
+  border:1px dashed rgba(157,135,104,.35);
+  border-bottom:none;
+}
+.g-bar:hover::after{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:var(--ink2);color:#fff;font-size:10px;padding:4px 8px;
+  border-radius:5px;white-space:nowrap;z-index:10;pointer-events:none;
+}
+.g-lbl{font-size:9px;color:var(--ghost);font-weight:500;margin-top:5px;white-space:nowrap}
+.g-val{font-size:8.5px;color:var(--gd);font-weight:600;position:absolute;top:-16px;left:50%;transform:translateX(-50%);white-space:nowrap;opacity:0;transition:opacity .15s}
+.g-bar.fat:hover .g-val{opacity:1}
+
+.grafico-leg{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+.gleg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.gleg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* MESES NAV */
+.meses-nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.mes-tab{font-size:11px;font-weight:500;padding:5px 12px;border-radius:99px;border:1.5px solid rgba(157,135,104,.2);background:none;cursor:pointer;color:var(--muted);transition:all .18s;font-family:'DM Sans',sans-serif}
+.mes-tab:hover{border-color:var(--gold);color:var(--gold)}
+.mes-tab.active{background:linear-gradient(135deg,var(--gd),var(--gold));border-color:var(--gold);color:#fff;font-weight:600}
+.mes-tab.completo{border-color:var(--green);color:var(--green)}
+.mes-tab.completo.active{background:linear-gradient(135deg,#1b3d27,var(--green));border-color:var(--green);color:#fff}
+.mes-tab.parcial{border-color:var(--gl);color:var(--gd)}
+
+/* MÊS VIEW */
+.mes-view{display:none}
+.mes-view.active{display:block;animation:su .25s ease}
+@keyframes su{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS DO MÊS */
+.mes-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;margin-bottom:14px}
+.mc{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:11px;padding:14px}
+.mc-head{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.mc-ico{font-size:14px}
+.mc-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mc-row{margin-bottom:5px}
+.mc-sub{font-size:9.5px;color:var(--ghost);margin-bottom:3px}
+
+/* CHECKS */
+.checks-section{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:11px;padding:16px;margin-bottom:12px}
+.checks-ttl{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.checks-ttl em{font-size:11px;color:var(--green);font-weight:600;letter-spacing:0;text-transform:none;font-style:normal}
+.semanas{display:flex;flex-direction:column;gap:8px}
+.sem-row{display:flex;align-items:center;gap:8px}
+.sem-lbl{font-size:10px;font-weight:500;color:var(--ghost);min-width:52px;flex-shrink:0}
+.dias-row{display:flex;gap:4px;flex-wrap:wrap}
+.dia-check{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;user-select:none}
+.dia-num{font-size:9px;color:var(--ghost)}
+.dia-box{width:20px;height:20px;border-radius:4px;border:1.5px solid rgba(157,135,104,.22);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:all .15s}
+.dia-check.checked .dia-box{background:var(--gold);border-color:var(--gold);color:#fff}
+.dia-check.checked .dia-num{color:var(--gd);font-weight:600}
+
+/* REALIZADO */
+.realizado-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;margin-bottom:14px}
+.rc{background:var(--gp);border:1px solid rgba(157,135,104,.2);border-radius:11px;padding:14px}
+.rc-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.rc-pct-bar{height:5px;background:var(--sand);border-radius:99px;overflow:hidden;margin-top:7px}
+.rc-pct-fill{height:100%;border-radius:99px;transition:width .4s ease}
+.rc-pct-txt{font-size:10px;margin-top:4px}
+.rc-vs{font-size:10px;color:var(--ghost);margin-top:4px}
+
+/* EDITABLE val verde no realizado */
+.editable-field.real .ef-val{color:var(--green)}
+.editable-field.real .ef-empty{color:rgba(176,152,128,.4)}
+
+/* OBS */
+.obs-wrap{background:var(--white);border:1px solid rgba(157,135,104,.15);border-radius:11px;padding:14px;margin-bottom:9px}
+.obs-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.obs-inp{width:100%;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:none;border:none;outline:none;resize:none;line-height:1.6;min-height:55px}
+.obs-inp::placeholder{color:rgba(176,152,128,.4)}
+.obs-btns{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(157,135,104,.15)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink2);color:var(--gl);font-size:12px;font-weight:500;padding:10px 18px;border-radius:99px;border:1px solid rgba(196,180,158,.15);z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* FOOTER */
+.footer{text-align:center;padding:20px;border-top:1px solid rgba(157,135,104,.12)}
+.footer-logo{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--gd);margin-bottom:4px}
+.footer-logo em{color:var(--gold);font-style:italic}
+.footer p{font-size:11px;color:var(--ghost);line-height:1.7}
+
+/* PRINT */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff}
+  .nav,.crime,.btn-pdf,.ano-btn,.mes-tab,.footer,.toast,.edit-mode,.ef-ico{display:none!important}
+  .wrap{padding:0;max-width:100%}
+  .hero{padding:16px;break-after:avoid}
+  .mes-view{display:block!important}
+  .mes-view:not(.active){display:none!important}
+  .grafico-wrap,.checks-section,.mc,.rc,.obs-wrap,.mac{break-inside:avoid}
+}
+@media(max-width:600px){
+  .nav,.hero,.crime{padding-left:16px;padding-right:16px}
+  .wrap{padding-left:14px;padding-right:14px}
+  .metas-anuais,.mes-cards,.realizado-grid{grid-template-columns:1fr 1fr}
+  .grafico-chart{height:120px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">nutri <em>que lucra</em><span class="nav-sub">Painel de Metas</span></div>
+  <div class="nav-right">
+    <div class="nav-tag">✦ Exclusivo para alunas</div>
+    <button class="btn-pdf" onclick="window.print()">⬇ Baixar PDF</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-pre">Metas mensais e anuais · Salvo no seu navegador</div>
+  <h1>Painel de<br><em>Metas Lucrativas</em></h1>
+  <p>Clique em qualquer número para editar. Marque os dias de prospecção. Acompanhe tudo com gráficos em tempo real.</p>
+</section>
+<div class="crime">🔒 Material exclusivo para alunas do Nutri que Lucra. Compartilhar com terceiros é crime previsto na Lei 9.610/98.</div>
+
+<div class="wrap">
+
+  <div class="ano-bar">
+    <div class="ano-bar-left">
+      <button class="ano-btn" onclick="mudarAno(-1)">‹</button>
+      <div class="ano-label" id="anoLabel">2026</div>
+      <button class="ano-btn" onclick="mudarAno(1)">›</button>
+    </div>
+    <div class="ano-status" id="anoStatus"></div>
+  </div>
+
+  <!-- METAS ANUAIS -->
+  <div class="section-ttl"><h2>Metas <em>Anuais</em></h2><div class="section-line"></div><div class="section-badge">Visão do ano</div></div>
+  <div class="metas-anuais" id="metasAnuais"></div>
+
+  <!-- GRÁFICO -->
+  <div class="section-ttl"><h2>Evolução <em>Mensal</em></h2><div class="section-line"></div></div>
+  <div class="grafico-wrap">
+    <div class="grafico-ttl">Faturamento <em>realizado vs meta</em></div>
+    <div class="grafico-sub">Barras douradas: realizado. Barras tracejadas: meta do mês.</div>
+    <div class="grafico-chart" id="graficoChart"></div>
+    <div class="grafico-leg">
+      <div class="gleg"><div class="gleg-dot" style="background:var(--gold)"></div>Realizado</div>
+      <div class="gleg"><div class="gleg-dot" style="background:rgba(157,135,104,.15);border:1px dashed #9d8768"></div>Meta</div>
+    </div>
+  </div>
+
+  <!-- MESES -->
+  <div class="section-ttl"><h2>Metas <em>Mensais</em></h2><div class="section-line"></div><div class="section-badge">Clique no mês</div></div>
+  <div class="meses-nav" id="mesesNav"></div>
+  <div id="mesesViews"></div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-logo">nutri <em>que lucra</em></div>
+  <p>© Nutri que Lucra · Todos os direitos reservados<br>Dados salvos localmente no seu navegador.</p>
+</div>
+<div class="toast" id="toast">✓ Salvo!</div>
+
+<script>
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MESES_DIAS = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+const CAMPOS = [
+  {key:'fat',   lbl:'Faturamento',       ico:'💰', prefix:'R$ '},
+  {key:'conv',  lbl:'Conversas abertas', ico:'💬', prefix:''},
+  {key:'fecha', lbl:'Fechamentos',       ico:'🎯', prefix:''},
+  {key:'pac',   lbl:'Pacientes ativos',  ico:'👩', prefix:''},
+  {key:'reel',  lbl:'Reels gravados',    ico:'🎬', prefix:''},
+  {key:'story', lbl:'Dias de stories',   ico:'📸', prefix:''},
+];
+
+const CAMPOS_ANUAIS = [
+  {key:'fat',   lbl:'Faturamento anual',  ico:'💰', prefix:'R$ '},
+  {key:'fecha', lbl:'Total fechamentos',  ico:'🎯', prefix:''},
+  {key:'pac',   lbl:'Pacientes no ano',   ico:'👩', prefix:''},
+  {key:'reel',  lbl:'Reels no ano',       ico:'🎬', prefix:''},
+];
+
+let anoAtual = new Date().getFullYear();
+let mesAtivo = new Date().getMonth();
+let dados = {};
+
+// ── STORAGE ─────────────────────────────────────
+function carregar(){ try{ const s=localStorage.getItem('nql_metas2_'+anoAtual); dados=s?JSON.parse(s):{}; }catch(e){ dados={}; } }
+function salvar(){ try{ localStorage.setItem('nql_metas2_'+anoAtual, JSON.stringify(dados)); }catch(e){} showToast(); }
+function get(path, def=''){ const ps=path.split('.'); let o=dados; for(const p of ps){ if(o==null)return def; o=o[p]; } return o!=null?o:def; }
+function set(path, val){ const ps=path.split('.'); let o=dados; for(let i=0;i<ps.length-1;i++){ if(!o[ps[i]])o[ps[i]]={};o=o[ps[i]]; } o[ps[ps.length-1]]=val; }
+
+// ── PARSE / FORMAT ───────────────────────────────
+function parseNum(s){ if(!s)return 0; return parseFloat(String(s).replace(/[^0-9.,]/g,'').replace(/\./g,'').replace(',','.'))||0; }
+function fmtNum(n, prefix=''){
+  if(!n) return '';
+  if(n>=1000) return prefix + n.toLocaleString('pt-BR');
+  return prefix + n;
+}
+function getDias(mi){ return (mi===1 && anoAtual%4===0 && (anoAtual%100!==0||anoAtual%400===0)) ? 29 : MESES_DIAS[mi]; }
+function calcRealAnual(key){ let t=0; for(let mi=0;mi<12;mi++) t+=parseNum(get('mes.'+mi+'.real.'+key,0)); return t; }
+
+// ── EDIÇÃO INLINE ────────────────────────────────
+// Cria um campo editável: clique → input + salvar/cancelar
+function makeEditable(path, opts={}){
+  const {prefix='', placeholder='0', isReal=false, onChange=null} = opts;
+  const val = get(path, '');
+  const num = parseNum(val);
+  const display = fmtNum(num, prefix) || '';
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;gap:2px';
+
+  const showRow = document.createElement('div');
+  showRow.className = 'editable-field' + (isReal ? ' real' : '');
+  showRow.innerHTML = display
+    ? `<span class="ef-val">${display}</span><span class="ef-ico">✏</span>`
+    : `<span class="ef-empty">${prefix}${placeholder}</span><span class="ef-ico">✏</span>`;
+
+  const editRow = document.createElement('div');
+  editRow.className = 'edit-mode';
+
+  const inp = document.createElement('input');
+  inp.className = 'edit-inp';
+  inp.type = 'text';
+  inp.value = val;
+  inp.placeholder = placeholder;
+
+  const btnOk = document.createElement('button');
+  btnOk.className = 'edit-ok';
+  btnOk.textContent = 'Salvar';
+
+  const btnCx = document.createElement('button');
+  btnCx.className = 'edit-cancel';
+  btnCx.textContent = 'Cancelar';
+
+  editRow.appendChild(inp);
+  editRow.appendChild(btnOk);
+  editRow.appendChild(btnCx);
+  wrap.appendChild(showRow);
+  wrap.appendChild(editRow);
+
+  function abrirEdit(e){
+    e.stopPropagation();
+    showRow.style.display = 'none';
+    editRow.classList.add('active');
+    inp.focus();
+    inp.select();
+  }
+  function fecharSalvar(){
+    set(path, inp.value.trim());
+    salvar();
+    if(onChange) onChange();
+    renderTudo();
+  }
+  function fecharCancelar(){
+    editRow.classList.remove('active');
+    showRow.style.display = '';
+  }
+
+  showRow.addEventListener('click', abrirEdit);
+  btnOk.addEventListener('click', fecharSalvar);
+  btnCx.addEventListener('click', fecharCancelar);
+  inp.addEventListener('keydown', e => { if(e.key==='Enter') fecharSalvar(); if(e.key==='Escape') fecharCancelar(); });
+
+  return wrap;
+}
+
+// ── METAS ANUAIS ─────────────────────────────────
+function renderAnuais(){
+  const c = document.getElementById('metasAnuais');
+  c.innerHTML = '';
+  CAMPOS_ANUAIS.forEach(cfg => {
+    const meta = parseNum(get('anual.'+cfg.key, 0));
+    const real = calcRealAnual(cfg.key);
+    const pct = meta ? Math.min(100, Math.round(real/meta*100)) : 0;
+
+    const div = document.createElement('div');
+    div.className = 'mac';
+
+    const header = document.createElement('div');
+    header.className = 'mac-header';
+    header.innerHTML = `<span class="mac-ico">${cfg.ico}</span><span class="mac-lbl">${cfg.lbl}</span>`;
+
+    const ef = makeEditable('anual.'+cfg.key, {prefix:cfg.prefix, placeholder:'Meta do ano'});
+
+    const realRow = document.createElement('div');
+    realRow.className = 'mac-real-row';
+    realRow.innerHTML = `<span class="mac-real-lbl">Realizado</span><span class="mac-real-val">${fmtNum(real, cfg.prefix)||'0'}</span>`;
+
+    const bar = document.createElement('div');
+    bar.className = 'mac-bar';
+    bar.innerHTML = `<div class="mac-fill" style="width:${pct}%"></div>`;
+
+    const pctTxt = document.createElement('div');
+    pctTxt.className = 'mac-pct';
+    pctTxt.textContent = `${pct}% da meta anual`;
+
+    div.appendChild(header);
+    div.appendChild(ef);
+    div.appendChild(realRow);
+    div.appendChild(bar);
+    div.appendChild(pctTxt);
+    c.appendChild(div);
+  });
+}
+
+// ── GRÁFICO ──────────────────────────────────────
+function renderGrafico(){
+  const c = document.getElementById('graficoChart');
+  c.innerHTML = '';
+  const H = 160; // altura fixa em px do container
+
+  const vals = MESES.map((_,mi) => ({
+    meta: parseNum(get('mes.'+mi+'.meta.fat', 0)),
+    real: parseNum(get('mes.'+mi+'.real.fat', 0)),
+  }));
+
+  const maxV = Math.max(...vals.map(v => Math.max(v.meta, v.real)), 1);
+
+  MESES.forEach((mes, mi) => {
+    const {meta, real} = vals[mi];
+    // Altura em px dentro do container de 160px
+    const hReal = Math.round(Math.max(3, (real/maxV) * H));
+    const hMeta = Math.round(Math.max(3, (meta/maxV) * H));
+
+    const col = document.createElement('div');
+    col.className = 'g-col';
+    col.style.cssText = 'display:flex;flex-direction:column;align-items:center;flex:1;position:relative';
+
+    const barsDiv = document.createElement('div');
+    barsDiv.className = 'g-bars';
+    barsDiv.style.cssText = `height:${H}px;align-items:flex-end;display:flex;gap:2px;width:100%`;
+
+    const bReal = document.createElement('div');
+    bReal.className = 'g-bar fat';
+    bReal.style.height = hReal + 'px';
+    bReal.setAttribute('data-tip', mes+': '+fmtNum(real,'R$ '));
+
+    const bMeta = document.createElement('div');
+    bMeta.className = 'g-bar meta-bar';
+    bMeta.style.height = hMeta + 'px';
+    bMeta.setAttribute('data-tip', 'Meta '+mes+': '+fmtNum(meta,'R$ '));
+
+    barsDiv.appendChild(bReal);
+    barsDiv.appendChild(bMeta);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'g-lbl';
+    lbl.textContent = mes.substring(0,3);
+
+    col.appendChild(barsDiv);
+    col.appendChild(lbl);
+    c.appendChild(col);
+  });
+}
+
+// ── MESES NAV ────────────────────────────────────
+function renderMesesNav(){
+  const c = document.getElementById('mesesNav');
+  c.innerHTML = '';
+  MESES.forEach((mes, mi) => {
+    const temMeta = CAMPOS.some(cfg => get('mes.'+mi+'.meta.'+cfg.key,'') !== '');
+    const temReal = CAMPOS.some(cfg => get('mes.'+mi+'.real.'+cfg.key,'') !== '');
+    let cls = 'mes-tab';
+    if(mi===mesAtivo) cls += ' active';
+    else if(temMeta && temReal) cls += ' completo';
+    else if(temMeta || temReal) cls += ' parcial';
+    const btn = document.createElement('button');
+    btn.className = cls;
+    btn.textContent = mes.substring(0,3);
+    btn.onclick = ()=>{ mesAtivo=mi; renderTudo(); };
+    c.appendChild(btn);
+  });
+}
+
+// ── MÊS VIEW ─────────────────────────────────────
+function renderMeses(){
+  const c = document.getElementById('mesesViews');
+  c.innerHTML = '';
+  MESES.forEach((mes, mi) => {
+    const view = document.createElement('div');
+    view.className = 'mes-view' + (mi===mesAtivo?' active':'');
+    buildMes(view, mi, mes);
+    c.appendChild(view);
+  });
+}
+
+function buildMes(view, mi, mesNome){
+  // Título do mês
+  const titDiv = document.createElement('div');
+  titDiv.style.cssText = 'margin-bottom:14px;display:flex;align-items:center;gap:8px';
+  titDiv.innerHTML = `<span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink)">${mesNome}</span><span style="font-size:11px;color:var(--ghost)">${anoAtual}</span>`;
+  view.appendChild(titDiv);
+
+  // ── Metas do mês ──
+  const metasSection = document.createElement('div');
+  metasSection.style.cssText = 'font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:9px';
+  metasSection.textContent = 'Metas do mês';
+  view.appendChild(metasSection);
+
+  const metasGrid = document.createElement('div');
+  metasGrid.className = 'mes-cards';
+  CAMPOS.forEach(cfg => {
+    const mc = document.createElement('div');
+    mc.className = 'mc';
+    const head = document.createElement('div');
+    head.className = 'mc-head';
+    head.innerHTML = `<span class="mc-ico">${cfg.ico}</span><span class="mc-lbl">${cfg.lbl}</span>`;
+    const ef = makeEditable('mes.'+mi+'.meta.'+cfg.key, {prefix:cfg.prefix, placeholder:'0'});
+    mc.appendChild(head);
+    mc.appendChild(ef);
+    metasGrid.appendChild(mc);
+  });
+  view.appendChild(metasGrid);
+
+  // ── Checks de prospecção ──
+  const numDias = getDias(mi);
+  let checkedCount = 0;
+  for(let d=1;d<=numDias;d++) if(get('mes.'+mi+'.checks.'+d,false)) checkedCount++;
+
+  const checksDiv = document.createElement('div');
+  checksDiv.className = 'checks-section';
+
+  const checksHead = document.createElement('div');
+  checksHead.className = 'checks-ttl';
+  checksHead.innerHTML = `<span>✅ Dias com prospecção ativa</span><em id="cc_${mi}">${checkedCount} / ${numDias} dias</em>`;
+  checksDiv.appendChild(checksHead);
+
+  const semsDiv = document.createElement('div');
+  semsDiv.className = 'semanas';
+  let dia = 1, sem = 1;
+  while(dia <= numDias){
+    const semRow = document.createElement('div');
+    semRow.className = 'sem-row';
+    semRow.innerHTML = `<span class="sem-lbl">Sem ${sem}</span>`;
+    const diasRow = document.createElement('div');
+    diasRow.className = 'dias-row';
+    for(let d=0;d<7&&dia<=numDias;d++,dia++){
+      const checked = get('mes.'+mi+'.checks.'+dia,false);
+      const dc = document.createElement('div');
+      dc.className = 'dia-check' + (checked?' checked':'');
+      dc.id = 'dc_'+mi+'_'+dia;
+      dc.innerHTML = `<span class="dia-num">${dia}</span><div class="dia-box">✓</div>`;
+      const _dia = dia;
+      dc.onclick = ()=>{ toggleCheck(mi, _dia); };
+      diasRow.appendChild(dc);
+    }
+    semRow.appendChild(diasRow);
+    semsDiv.appendChild(semRow);
+    sem++;
+  }
+  checksDiv.appendChild(semsDiv);
+  view.appendChild(checksDiv);
+
+  // ── Realizado ──
+  const realSection = document.createElement('div');
+  realSection.style.cssText = 'font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 9px';
+  realSection.textContent = 'Resultado realizado';
+  view.appendChild(realSection);
+
+  const realGrid = document.createElement('div');
+  realGrid.className = 'realizado-grid';
+  CAMPOS.forEach(cfg => {
+    const meta = parseNum(get('mes.'+mi+'.meta.'+cfg.key, 0));
+    const real = parseNum(get('mes.'+mi+'.real.'+cfg.key, 0));
+    const pct = meta ? Math.min(150, Math.round(real/meta*100)) : 0;
+    const cor = pct>=100?'var(--green)':pct>=60?'#b45309':'var(--red)';
+    const fillCls = pct>=100?'rc-pct-fill':pct>=60?'rc-pct-fill':'rc-pct-fill';
+    const fillBg = pct>=100?'linear-gradient(90deg,var(--green),#4ade80)':pct>=60?'linear-gradient(90deg,#f59e0b,#fbbf24)':'linear-gradient(90deg,var(--red),#f87171)';
+    const emoji = pct>=100?' 🏆':pct>=60?' 📈':' 📉';
+
+    const rc = document.createElement('div');
+    rc.className = 'rc';
+    const head = document.createElement('div');
+    head.className = 'rc-head';
+    head.innerHTML = `<span class="mc-ico">${cfg.ico}</span><span class="mc-lbl">${cfg.lbl}</span>`;
+
+    const ef = makeEditable('mes.'+mi+'.real.'+cfg.key, {prefix:cfg.prefix, placeholder:'0', isReal:true});
+
+    const vsDiv = document.createElement('div');
+    vsDiv.className = 'rc-vs';
+    vsDiv.textContent = 'Meta: ' + (fmtNum(meta, cfg.prefix)||'0');
+
+    const barDiv = document.createElement('div');
+    barDiv.className = 'rc-pct-bar';
+    barDiv.innerHTML = `<div class="${fillCls}" style="width:${Math.min(100,pct)}%;background:${fillBg}"></div>`;
+
+    const pctTxt = document.createElement('div');
+    pctTxt.className = 'rc-pct-txt';
+    pctTxt.style.color = cor;
+    pctTxt.textContent = `${pct}% da meta${emoji}`;
+
+    rc.appendChild(head);
+    rc.appendChild(ef);
+    rc.appendChild(vsDiv);
+    rc.appendChild(barDiv);
+    rc.appendChild(pctTxt);
+    realGrid.appendChild(rc);
+  });
+  view.appendChild(realGrid);
+
+  // ── Observações ──
+  const obsDiv = document.createElement('div');
+  obsDiv.className = 'obs-wrap';
+  const obsLbl = document.createElement('div');
+  obsLbl.className = 'obs-lbl';
+  obsLbl.textContent = '📝 Anotações do mês';
+  const obsTxt = document.createElement('textarea');
+  obsTxt.className = 'obs-inp';
+  obsTxt.rows = 3;
+  obsTxt.placeholder = 'O que funcionou? O que precisa melhorar? Insights importantes...';
+  obsTxt.value = get('mes.'+mi+'.obs','');
+
+  // Obs usa blur para salvar (não incomoda digitando)
+  const obsBtns = document.createElement('div');
+  obsBtns.className = 'obs-btns';
+  const obsOk = document.createElement('button');
+  obsOk.className = 'edit-ok';
+  obsOk.style.display = 'none';
+  obsOk.textContent = 'Salvar anotação';
+  const obsCx = document.createElement('button');
+  obsCx.className = 'edit-cancel';
+  obsCx.style.display = 'none';
+  obsCx.textContent = 'Cancelar';
+  const obsOrig = {v: obsTxt.value};
+  obsTxt.onfocus = ()=>{ obsOk.style.display=''; obsCx.style.display=''; };
+  obsOk.onclick = ()=>{ set('mes.'+mi+'.obs', obsTxt.value); salvar(); obsOk.style.display='none'; obsCx.style.display='none'; obsOrig.v=obsTxt.value; };
+  obsCx.onclick = ()=>{ obsTxt.value=obsOrig.v; obsOk.style.display='none'; obsCx.style.display='none'; };
+  obsBtns.appendChild(obsOk);
+  obsBtns.appendChild(obsCx);
+  obsDiv.appendChild(obsLbl);
+  obsDiv.appendChild(obsTxt);
+  obsDiv.appendChild(obsBtns);
+  view.appendChild(obsDiv);
+}
+
+// ── TOGGLE CHECK ─────────────────────────────────
+function toggleCheck(mi, dia){
+  const atual = get('mes.'+mi+'.checks.'+dia, false);
+  set('mes.'+mi+'.checks.'+dia, !atual);
+  salvar();
+  const el = document.getElementById('dc_'+mi+'_'+dia);
+  if(el) el.classList.toggle('checked', !atual);
+  // Atualizar contador
+  const numDias = getDias(mi);
+  let count=0; for(let d=1;d<=numDias;d++) if(get('mes.'+mi+'.checks.'+d,false)) count++;
+  const cc = document.getElementById('cc_'+mi);
+  if(cc) cc.textContent = count+' / '+numDias+' dias';
+  // Atualizar gráfico e anuais
+  renderAnuais();
+  renderGrafico();
+  renderMesesNav();
+}
+
+// ── MUDAR ANO ────────────────────────────────────
+function mudarAno(d){ anoAtual+=d; document.getElementById('anoLabel').textContent=anoAtual; carregar(); renderTudo(); }
+
+// ── RENDER TUDO ──────────────────────────────────
+function renderTudo(){
+  renderAnuais();
+  renderGrafico();
+  renderMesesNav();
+  renderMeses();
+  // Status do ano
+  const real = calcRealAnual('fat');
+  const meta = parseNum(get('anual.fat',0));
+  document.getElementById('anoStatus').textContent = meta>0
+    ? fmtNum(real,'R$ ')+' realizado de '+fmtNum(meta,'R$ ')+' ('+Math.round(real/meta*100)+'%)'
+    : real>0 ? fmtNum(real,'R$ ')+' realizado no ano' : '';
+}
+
+// ── TOAST ────────────────────────────────────────
+function showToast(){ const t=document.getElementById('toast'); t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1800); }
+
+// INIT
+carregar();
+renderTudo();
+</script>
+</body>
+</html>
